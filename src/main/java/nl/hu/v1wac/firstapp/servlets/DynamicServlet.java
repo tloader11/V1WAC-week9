@@ -37,7 +37,7 @@ public class DynamicServlet extends HttpServlet {
         resp.setContentType("text/html");
         out.println("<!DOCTYPE html>");
         out.println("<html>");
-        out.println(" <title>Dynamic Example</title>");
+        out.println(" <title>Calculator</title>");
         out.println(" <body>");
         out.println(" <h2>My Basic Calculator</h2>");
         out.println(" <h2>Output: "+a +" "+ soort + " " + b + " = "+ output + "!</h2>");
