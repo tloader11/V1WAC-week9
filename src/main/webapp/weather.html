@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <link href="css/week4.css" type="text/css" rel="stylesheet" />
+    <!-- https://ipapi.co/json/ -->
+</head>
+<body>
+<h2>Mijn locatie</h2>
+<div class="locatie">
+
+</div>
+<h2 class="weer">Het weer in </h2><a href="#homeloc">Bekijk eigen info</a><br>
+<div class="weather">
+
+</div>
+<h2>Beschikbare bestemmingen</h2>
+<div class="dests">
+    <p class='leftside'><b>Land</b></p><p class='leftside'><b>Hoofdstad</b></p><p class='leftside'><b>Regio</b></p><p class='leftside'><b>Oppervlakte</b></p><p class='leftside'><b>Inwoners</b></p><br>
+</div>
+<script>
+
+    function formatTime(time)
+    {
+        // Create a new JavaScript Date object based on the timestamp
+        // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+        var date = new Date(time*1000);
+        // Hours part from the timestamp
+        var hours = date.getHours();
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();
+
+        // Will display time in 10:30:23 format
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        return formattedTime;
+    }
+
+    $(document).ready(function () {
+        var homeloc = "";
+        $.ajax({url:"https://ipapi.co/json/"}).done(function (data)
+        {
+           $.each(data, function (index, value) {
+               $(".locatie").append("<p class='leftside'>" + index + "</p><p class='rightside'>"+value+"</p><br>");
+           });
+            console.log(data);
+            $.ajax({url:"https://api.openweathermap.org/data/2.5/weather?q="+data.city+","+data.country+"&APPID=3b6eddc51b8f69474347e8d916e9c54f&units=metric"}).done(function (weather)
+            {
+                $(".weer").append(data.city);
+                homeloc = data.city;
+
+                $(".weather").append("<p class='leftside'>Temperatuur:</p><p class='rightside'>"+weather['main']['temp']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Luchtvochtigheid: </p><p class='rightside'>"+weather['main']['humidity']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windsnelheid: </p><p class='rightside'>"+weather['wind']['speed']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windrichting: </p><p class='rightside'>"+weather['wind']['deg']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsopgang: </p><p class='rightside'>"+formatTime(weather['sys']['sunrise'])+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsondergang: </p><p class='rightside'>"+formatTime(weather['sys']['sunset'])+"</p><br>");
+                console.log(weather);
+            });
+        });
+
+        $.ajax({url:"restservices/countries"}).done(function (landjes)
+        {
+            var countries = landjes['countries'];
+            $.each(countries,function (land) {
+                land=countries[land];
+                var naam = land['name'];
+                var hoofdstad = land['capital'];
+                var regio = land['region'];
+                var opp = land['surface'];
+                var inwoners = land['population'];
+                $(".dests").append("<a class='rowlink' href='#"+hoofdstad+"'><p class='leftside'>"+naam+"</p><p class='leftside'>"+hoofdstad+"</p><p class='leftside'>"+regio+"</p><p class='leftside'>"+opp+"</p><p class='leftside'>"+inwoners+"</p></a><br>");
+            })
+        });
+
+        $(window).bind( 'hashchange', function(e) {
+            var hash = location.hash.substr(1,location.hash.length-1);
+            if(hash=="homeloc")
+            {
+                hash=homeloc;
+            }
+            $.ajax({url:"https://api.openweathermap.org/data/2.5/weather?q="+hash+"&APPID=3b6eddc51b8f69474347e8d916e9c54f&units=metric"}).done(function (weather)
+            {
+                $(".weer").empty();
+                $(".weather").empty();
+
+                $(".weer").append("Het weer in "+weather['name']);
+
+                $(".weather").append("<p class='leftside'>Temperatuur:</p><p class='rightside'>"+weather['main']['temp']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Luchtvochtigheid: </p><p class='rightside'>"+weather['main']['humidity']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windsnelheid: </p><p class='rightside'>"+weather['wind']['speed']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windrichting: </p><p class='rightside'>"+weather['wind']['deg']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsopgang: </p><p class='rightside'>"+formatTime(weather['sys']['sunrise'])+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsondergang: </p><p class='rightside'>"+formatTime(weather['sys']['sunset'])+"</p><br>");
+                console.log(weather);
+            });
+
+
+        });
+
+    });
+</script>
+</body>
+</html>
