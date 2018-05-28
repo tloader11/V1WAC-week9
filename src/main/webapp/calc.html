@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <link href="css/week4.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<center>
+<h2>Calculator</h2>
+<input type="text" id="tekstregel"  />
+<br>
+<br>
+<input type="button" value="1" class="numberrow" />
+<input type="button" value="2" class="numberrow" />
+<input type="button" value="3" class="numberrow" />
+<input type="button" value="/" class="numberrow" />
+<br>
+<input type="button" value="4" class="numberrow" />
+<input type="button" value="5" class="numberrow" />
+<input type="button" value="6" class="numberrow" />
+<input type="button" value="*" class="numberrow" />
+<br>
+<input type="button" value="7" class="numberrow" />
+<input type="button" value="8" class="numberrow" />
+<input type="button" value="9" class="numberrow" />
+<input type="button" value="-" class="numberrow" />
+<br>
+<input type="button" value="c" class="numberrow" style="margin-left: -4px;" />
+<input type="button" value="0" class="numberrow" />
+<input type="button" value="=" class="numberrow" />
+<input type="button" value="+" class="numberrow" />
+</center>
+<script>
+    $(document).ready(function () {
+        $(".numberrow").on('click', function () {
+
+            if($(this).val() != "c" && $(this).val() != "=")
+            {
+                $("#tekstregel").val($("#tekstregel").val() + $(this).val());
+            }
+            else if($(this).val() == "c")
+            {
+                $("#tekstregel").val("");
+            }
+            else if($(this).val() == "=")
+            {
+                try
+                {
+                    var newval = eval($("#tekstregel").val());
+                    $("#tekstregel").val(newval);
+                }
+                catch(err)
+                {
+
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

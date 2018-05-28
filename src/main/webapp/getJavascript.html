@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Javascript</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<h2>Jahoor. Gaan we weer. Week 4 les 1</h2>
+<textarea rows="10" cols="20" id="veldje"></textarea>
+
+<script>
+    $(document).ready(function () {
+        var text = "";
+
+        setInterval(function(){
+            if(text!=$("#veldje").val())
+            {
+                text = $("#veldje").val();
+                console.log(text);
+            }
+        }, 5000);
+
+    });
+</script>
+</body>
+</html>
