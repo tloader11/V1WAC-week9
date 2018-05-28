@@ -1,5 +1,6 @@
 package nl.hu.v1wac.firstapp.webservices;
 
+import nl.hu.v1wac.firstapp.database.CountryPostgresDaoImpl;
 import nl.hu.v1wac.firstapp.model.Country;
 import nl.hu.v1wac.firstapp.model.WorldService;
 import org.json.JSONObject;
@@ -18,6 +19,9 @@ public class CountryResource extends HttpServlet
 {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        CountryPostgresDaoImpl impl = new CountryPostgresDaoImpl();
+        Country nl = impl.findByCode("NL");
+        System.out.println("!@!@!@!@!@!@!@!@!@!@!@! NLLLLL: "+nl.getCapital());
         WorldService service = new WorldService();
         String[] uri = req.getRequestURI().split("/");
         JSONObject obj = new JSONObject();
