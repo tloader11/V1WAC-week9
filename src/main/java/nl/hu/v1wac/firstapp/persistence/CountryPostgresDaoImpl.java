@@ -1,4 +1,4 @@
-package nl.hu.v1wac.firstapp.database;
+package nl.hu.v1wac.firstapp.persistence;
 
 import nl.hu.v1wac.firstapp.model.Country;
 
@@ -9,7 +9,22 @@ import java.util.List;
 public class CountryPostgresDaoImpl extends PostgresBaseDao implements CountryDao {
     @Override
     public boolean save(Country country) {
-        return false;
+        String sql = String.format("INSERT INTO public.country(" +
+                "code, iso3, name, continent, region, surfacearea, " +
+                "population, governmentform, " +
+                "latitude, longitude, capital) " +
+                "VALUES ('%s', '%s', '%s', '%s', '%s', %f, %d, '%s', %f, %f, '%s')",country.getCode(), country.getIso3(),country.getName(),country.getContinent(),country.getRegion(),
+                country.getSurface(),country.getPopulation(),country.getGovernment(), country.getLatitude(),country.getLongitude(), country.getCapital());
+        try {
+            super.getConnection().createStatement().executeUpdate(sql);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return false;
+        }
+
     }
 
     @Override
@@ -108,14 +123,38 @@ public class CountryPostgresDaoImpl extends PostgresBaseDao implements CountryDa
 
     @Override
     public boolean update(Country country) {
-        String sql = "UPDATE country SET code='{0}', iso3='{1}', name='{2}', continent='{3}', region='{4}', surfacearea='{5}', " +
-                "indepyear='{6}', population='{7}', lifeexpectancy='{8}', gnp='{9}', gnpold='{10}', " +
-                "localname='{11}', governmentform='{12}', headofstate='{13}', latitude={14}, longitude={15}, " +
-                "capital='{16}' WHERE iso3='{17}';";
+        if(country.getIso3().length() > 3 || country.getName().length()>52 || country.getContinent().length()>20)
+        {
+            return false;
+        }
+        String sql = String.format("UPDATE country SET iso3='%s', name='%s', continent='%s', region='%s', surfacearea=%f, " +
+                "population=%d, governmentform='%s', latitude=%f, longitude=%f, capital='%s' WHERE code='%s'",
+                country.getIso3(),country.getName(),country.getContinent(),country.getRegion(),
+                country.getSurface(),country.getPopulation(),country.getGovernment(), country.getLatitude(),country.getLongitude(), country.getCapital(), country.getCode());
+        //System.out.println(sql);
+        try {
+            super.getConnection().createStatement().executeUpdate(sql);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     @Override
     public boolean delete(Country country) {
+        String sql = "DELETE FROM country WHERE code='"+country.getCode()+"'";
+        try {
+            super.getConnection().createStatement().executeUpdate(sql);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
         return false;
     }
 }

@@ -1,10 +1,9 @@
-package nl.hu.v1wac.firstapp.database;
+package nl.hu.v1wac.firstapp.persistence;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 
 public class PostgresBaseDao
 {

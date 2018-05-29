@@ -1,7 +1,7 @@
 package nl.hu.v1wac.firstapp.webservices;
 
+import nl.hu.v1wac.firstapp.persistence.CountryPostgresDaoImpl;
 import nl.hu.v1wac.firstapp.model.Country;
-import nl.hu.v1wac.firstapp.model.WorldService;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -18,8 +18,8 @@ public class WorldResource extends HttpServlet
 {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        WorldService service = new WorldService();
-        List<Country> countries = service.getAllCountries();
+        CountryPostgresDaoImpl service = new CountryPostgresDaoImpl();
+        List<Country> countries = service.findAll();
         JSONObject obj = new JSONObject();
         obj.put("countries", countries);
         PrintWriter out = resp.getWriter();

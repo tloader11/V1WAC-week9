@@ -1,4 +1,4 @@
-package nl.hu.v1wac.firstapp.database;
+package nl.hu.v1wac.firstapp.persistence;
 
 import nl.hu.v1wac.firstapp.model.Country;
 

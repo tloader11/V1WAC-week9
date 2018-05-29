@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <link href="css/week4.css" type="text/css" rel="stylesheet" />
+    <link href="css/jquery-ui.min.css" type="text/css" rel="stylesheet" />
+    <link href="css/jquery-ui.structure.min.css" type="text/css" rel="stylesheet" />
+    <link href="css/jquery-ui.theme.min.css" type="text/css" rel="stylesheet" />
+    <!-- https://ipapi.co/json/ -->
+</head>
+<body>
+<h2>Mijn locatie</h2>
+<div class="locatie">
+
+</div>
+<h2 class="weer">Het weer in </h2><a href="#homeloc">Bekijk eigen info</a><br>
+<div class="weather">
+
+</div>
+<h2>Beschikbare bestemmingen</h2>
+<a href="#addCountry">+ Klik hier om een land toe te voegen</a><br>
+<div class="dests">
+    <p class='leftside'><b>Land</b></p><p class='leftside'><b>Hoofdstad</b></p><p class='leftside'><b>Regio</b></p><p class='leftside'><b>Oppervlakte</b></p><p class='leftside'><b>Inwoners</b></p><p class='leftside'><b>Update</b></p><p class='leftside'><b>Delete</b></p><br>
+</div>
+
+<div class="newCountryDialog">
+    <form class="addCountryForm">
+        <div class="errorAdd"></div>
+        <input type="text" name="code" id="codeA" placeholder="code (CN)" /><br>
+        <input type="text" name="iso3" id="iso3A" placeholder="ISO3" /><br>
+        <input type="text" name="name" id="nameA" placeholder="Name" /><br>
+        <input type="text" name="continent" id="continentA" placeholder="Continent" /><br>
+        <input type="text" name="region" id="regionA" placeholder="region" /><br>
+        <input type="text" name="surfacearea" id="surfaceareaA" placeholder="surface area" /><br>
+        <input type="text" name="population" id="populationA" placeholder="population" /><br>
+        <input type="text" name="governmentform" id="governmentformA" placeholder="government form" /><br>
+        <input type="text" name="latitude" id="latitudeA" placeholder="latitude" /><br>
+        <input type="text" name="longitude" id="longitudeA" placeholder="longitude" /><br>
+        <input type="text" name="capital" id="capitalA" placeholder="capital" /><br>
+        <button type="submit">Save changes</button>
+    </form>
+</div>
+
+<div class="dialogToHide">
+    <form class="changeCountryForm">
+        <div class="error"></div>
+        <input type="text" name="iso3" id="iso3" placeholder="ISO3" /><br>
+        <input type="text" name="name" id="name" placeholder="Name" /><br>
+        <input type="text" name="continent" id="continent" placeholder="Continent" /><br>
+        <input type="text" name="region" id="region" placeholder="region" /><br>
+        <input type="text" name="surfacearea" id="surfacearea" placeholder="surface area" /><br>
+        <input type="text" name="population" id="population" placeholder="population" /><br>
+        <input type="text" name="governmentform" id="governmentform" placeholder="government form" /><br>
+        <input type="text" name="latitude" id="latitude" placeholder="latitude" /><br>
+        <input type="text" name="longitude" id="longitude" placeholder="longitude" /><br>
+        <input type="text" name="capital" id="capital" placeholder="capital" /><br>
+        <input type="hidden" name="code" id="code" />
+        <button type="submit">Save changes</button>
+    </form>
+</div>
+
+<script>
+
+    $(".dialogToHide").dialog({
+        autoOpen : false, modal : true, show : "blind", hide : "blind"
+    });
+
+    $(".newCountryDialog").dialog({
+        autoOpen : false, modal : true, show : "blind", hide : "blind"
+    });
+
+    function remove_hash_from_url()
+    {
+        history.replaceState(null, null, ' ');
+    }
+    function displayError(name)
+    {
+        $("."+name).empty().append("<p>Ah-oh... Something went wrong.. Please check your input fields!</p>");
+    }
+
+    $(".addCountryForm").submit(function (e) {
+        e.preventDefault();
+        console.log("FORM SUBMIT");
+        var code = $("#codeA").val();
+        var iso3 = $("#iso3A").val();
+        var continent = $("#continentA").val();
+        var name = $("#nameA").val();
+        var capital = $("#capitalA").val();
+        var region = $("#regionA").val();
+        var surfacearea = $("#surfaceareaA").val();
+        var population = $("#populationA").val();
+        var governmentform = $("#governmentformA").val().replace("'","''");
+        var latitude = $("#latitudeA").val();
+        var longitude = $("#longitudeA").val();
+
+        var requestParams = {code:code,iso3:iso3,continent:continent,name:name,capital:capital,region:region, surfacearea:surfacearea,
+            population:population,governmentform:governmentform,latitude:latitude,longitude:longitude};
+
+        $.ajax({
+            url:"restservices/countries/"+code,
+            type:"POST",
+            data:requestParams
+        }).always(function (a,textStatus,b) {
+            console.log(code);
+            if(a['status'])
+            {
+                remove_hash_from_url();
+                location.reload(true);
+            }
+            else
+            {
+                displayError("errorAdd");
+            }
+        });
+        return false;
+    });
+
+    $(".changeCountryForm").submit(function (e) {
+        e.preventDefault();
+        console.log("FORM SUBMIT");
+        var code = $("#code").val();
+        var iso3 = $("#iso3").val();
+        var continent = $("#continent").val();
+        var name = $("#name").val();
+        var capital = $("#capital").val();
+        var region = $("#region").val();
+        var surfacearea = $("#surfacearea").val();
+        var population = $("#population").val();
+        var governmentform = $("#governmentform").val().replace("'","''");
+        var latitude = $("#latitude").val();
+        var longitude = $("#longitude").val();
+
+        var requestParams = {code:code,iso3:iso3,continent:continent,name:name,capital:capital,region:region, surfacearea:surfacearea,
+            population:population,governmentform:governmentform,latitude:latitude,longitude:longitude};
+
+        var out = [];
+
+        for (var key in requestParams) {
+            out.push(key + '=' + encodeURIComponent(requestParams[key]));
+        }
+
+        var encodedParams = out.join('&');
+
+        $.ajax({
+            url:"restservices/countries/"+code+"?"+encodedParams,
+            type:"PUT"
+        }).always(function (a,textStatus,b) {
+            console.log(code);
+            if(a['status'])
+            {
+                remove_hash_from_url();
+                location.reload(true);
+            }
+            else
+            {
+                displayError("error");
+            }
+        });
+        return false;
+    });
+
+    function formatTime(time)
+    {
+        // Create a new JavaScript Date object based on the timestamp
+        // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+        var date = new Date(time*1000);
+        // Hours part from the timestamp
+        var hours = date.getHours();
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();
+
+        // Will display time in 10:30:23 format
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        return formattedTime;
+    }
+
+    $(document).ready(function () {
+        var all_countries = null;
+        var homeloc = "";
+        $.ajax({url:"https://ipapi.co/json/"}).done(function (data)
+        {
+           $.each(data, function (index, value) {
+               $(".locatie").append("<p class='leftside'>" + index + "</p><p class='rightside'>"+value+"</p><br>");
+           });
+            console.log(data);
+            $.ajax({url:"https://api.openweathermap.org/data/2.5/weather?q="+data.city+","+data.country+"&APPID=3b6eddc51b8f69474347e8d916e9c54f&units=metric"}).done(function (weather)
+            {
+                $(".weer").append(data.city);
+                homeloc = data.city;
+
+                $(".weather").append("<p class='leftside'>Temperatuur:</p><p class='rightside'>"+weather['main']['temp']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Luchtvochtigheid: </p><p class='rightside'>"+weather['main']['humidity']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windsnelheid: </p><p class='rightside'>"+weather['wind']['speed']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windrichting: </p><p class='rightside'>"+weather['wind']['deg']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsopgang: </p><p class='rightside'>"+formatTime(weather['sys']['sunrise'])+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsondergang: </p><p class='rightside'>"+formatTime(weather['sys']['sunset'])+"</p><br>");
+                console.log(weather);
+            });
+        });
+
+        $.ajax({url:"restservices/countries"}).done(function (landjes)
+        {
+            var countries = landjes['countries']
+            all_countries = countries;
+            $.each(countries,function (land) {
+                land=countries[land];
+                var naam = land['name'];
+                var hoofdstad = land['capital'];
+                var regio = land['region'];
+                var opp = land['surface'];
+                var inwoners = land['population'];
+                $(".dests").append("<a class='rowlink' href='#"+hoofdstad+"'><p class='leftside'>"+naam+"</p><p class='leftside'>"+hoofdstad+"</p>" +
+                    "<p class='leftside'>"+regio+"</p><p class='leftside'>"+opp+"</p><p class='leftside'>"+inwoners+"</p></a><p class='leftside'><a href='#edit"+land['code']+"'>Bewerken</a></p><p class='leftside'><a href='#remove"+land['code']+"'>Verwijderen</a></p><br>");
+            })
+        });
+
+        $(window).bind( 'hashchange', function(e) {
+            var hash = location.hash.substr(1,location.hash.length-1);
+
+            if(hash.substr(0,6)=="remove")
+            {
+                console.log("REMOVE PRESSED");
+                var code = hash.substr(6,hash.length);
+                $.ajax({url:"restservices/countries/"+code,type:"DELETE"}).always(function (result) {
+                    console.log(result);
+                    remove_hash_from_url();
+                    location.reload(true);
+                });
+                console.log(code);
+                return;
+            }
+            else if(hash.substr(0,4)=="edit")
+            {
+                console.log("UPDATE PRESSED");
+                $("#code").val(hash.substr(4,hash.length));
+                $.each(all_countries, function (key,land) {
+                    if(land['code']==$("#code").val())
+                    {
+                        var naam = land['name'];
+                        var hoofdstad = land['capital'];
+                        var regio = land['region'];
+                        var opp = land['surface'];
+                        var inwoners = land['population'];
+                        $("#iso3").val(land['iso3']);
+                        $("#continent").val(land['continent']);
+                        $("#name").val(naam);
+                        $("#capital").val(hoofdstad);
+                        $("#region").val(regio);
+                        $("#surfacearea").val(opp);
+                        $("#population").val(inwoners);
+                        $("#governmentform").val(land['government']);
+                        $("#latitude").val(land['latitude']);
+                        $("#longitude").val(land['longitude']);
+                    }
+                });
+                $( ".dialogToHide" ).dialog("open");
+                return;
+            }
+            else if(hash=="addCountry")
+            {
+                $( ".newCountryDialog" ).dialog("open");
+                return;
+            }
+            else if(hash=="homeloc")
+            {
+                hash=homeloc;
+            }
+            $.ajax({url:"https://api.openweathermap.org/data/2.5/weather?q="+hash+"&APPID=3b6eddc51b8f69474347e8d916e9c54f&units=metric"}).done(function (weather)
+            {
+                $(".weer").empty();
+                $(".weather").empty();
+
+                $(".weer").append("Het weer in "+weather['name']);
+
+                $(".weather").append("<p class='leftside'>Temperatuur:</p><p class='rightside'>"+weather['main']['temp']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Luchtvochtigheid: </p><p class='rightside'>"+weather['main']['humidity']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windsnelheid: </p><p class='rightside'>"+weather['wind']['speed']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Windrichting: </p><p class='rightside'>"+weather['wind']['deg']+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsopgang: </p><p class='rightside'>"+formatTime(weather['sys']['sunrise'])+"</p><br>");
+                $(".weather").append("<p class='leftside'>Zonsondergang: </p><p class='rightside'>"+formatTime(weather['sys']['sunset'])+"</p><br>");
+                console.log(weather);
+            });
+
+
+        });
+
+    });
+</script>
+</body>
+</html>
