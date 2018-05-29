@@ -4,6 +4,7 @@ import nl.hu.v1wac.firstapp.persistence.CountryPostgresDaoImpl;
 import nl.hu.v1wac.firstapp.model.Country;
 import org.json.JSONObject;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +18,7 @@ public class CountryResource extends HttpServlet
 {
 
     @Override
+    @RolesAllowed("user")
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         CountryPostgresDaoImpl service = new CountryPostgresDaoImpl();
@@ -63,6 +65,7 @@ public class CountryResource extends HttpServlet
     }
 
     @Override
+    @RolesAllowed("user")
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         CountryPostgresDaoImpl service = new CountryPostgresDaoImpl();
@@ -94,6 +97,7 @@ public class CountryResource extends HttpServlet
     }
 
     @Override
+    @RolesAllowed("user")
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         CountryPostgresDaoImpl service = new CountryPostgresDaoImpl();
